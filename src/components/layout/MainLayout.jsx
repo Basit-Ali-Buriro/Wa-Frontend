@@ -16,7 +16,7 @@ const MainLayout = () => {
       {/* Mobile Menu Button - Only visible on small screens */}
       <button
         onClick={() => setShowMobileMenu(!showMobileMenu)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors"
+        className="md:hidden fixed top-4 left-4 z-50 p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors"
       >
         {showMobileMenu ? <X size={20} /> : <Menu size={20} />}
       </button>
@@ -24,35 +24,35 @@ const MainLayout = () => {
       {/* Mobile Overlay */}
       {showMobileMenu && (
         <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
+          className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
           onClick={() => setShowMobileMenu(false)}
         />
       )}
 
       {/* Sidebar - Responsive */}
       <div className={`
-        fixed lg:relative z-40 h-full transition-transform duration-300 ease-in-out
-        ${showMobileMenu ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        fixed md:relative z-40 h-full transition-transform duration-300 ease-in-out
+        ${showMobileMenu ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <Sidebar onNavigate={() => setShowMobileMenu(false)} />
       </div>
 
       {/* Conversation List - Hidden on mobile when chat is selected */}
       <div className={`
-        w-full sm:w-80 lg:w-96 shrink-0
-        ${selectedConversation ? 'hidden lg:flex' : 'flex'}
+        w-full sm:w-80 md:w-96 shrink-0
+        ${selectedConversation ? 'hidden md:flex' : 'flex'}
       `}>
         <ConversationList />
       </div>
-      
+
       {/* Chat Area - Full width on mobile, flexible on desktop */}
       <div className={`
         flex-1 min-w-0
-        ${selectedConversation ? 'flex' : 'hidden lg:flex'}
+        ${selectedConversation ? 'flex' : 'hidden md:flex'}
       `}>
         <ChatArea key={selectedConversation?._id || 'welcome-screen'} />
       </div>
-      
+
       <IncomingCallModal />
       <VideoCallInterface />
     </div>

@@ -17,7 +17,7 @@ const SmartSuggestions = ({ conversationId, onSelect, onClose }) => {
     try {
       const response = await aiAPI.getSuggestions(conversationId);
       setSuggestions(response.data.suggestions || []);
-    } catch (error) {
+    } catch {
       console.error('Failed to fetch suggestions');
     } finally {
       setLoading(false);
@@ -26,7 +26,7 @@ const SmartSuggestions = ({ conversationId, onSelect, onClose }) => {
 
   if (loading) {
     return (
-      <div className="bg-linear-to-r from-purple-50 to-blue-50 border-t border-gray-200 p-3">
+      <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-t border-gray-200 p-3">
         <div className="flex items-center justify-center gap-2">
           <div className="animate-spin rounded-full h-4 w-4 border-2 border-purple-600 border-t-transparent"></div>
           <span className="text-sm text-purple-600">Generating suggestions...</span>
@@ -37,7 +37,7 @@ const SmartSuggestions = ({ conversationId, onSelect, onClose }) => {
 
   if (!suggestions.length) {
     return (
-      <div className="bg-linear-to-r from-purple-50 to-blue-50 border-t border-gray-200 p-3">
+      <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-t border-gray-200 p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-purple-600">
             <Sparkles size={16} />
@@ -52,7 +52,7 @@ const SmartSuggestions = ({ conversationId, onSelect, onClose }) => {
   }
 
   return (
-    <div className="bg-linear-to-r from-purple-50 to-blue-50 border-t border-gray-200 p-3">
+    <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-t border-gray-200 p-3">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2 text-purple-600">
           <Sparkles size={16} />

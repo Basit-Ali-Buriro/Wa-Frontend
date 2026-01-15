@@ -28,7 +28,7 @@ const AIChatModal = ({ isOpen, onClose }) => {
 
       const aiMessage = { sender: 'AI', text: response.data.response };
       setMessages((prev) => [...prev, aiMessage]);
-    } catch (error) {
+    } catch {
       toast.error('AI request failed');
     } finally {
       setLoading(false);
@@ -46,11 +46,10 @@ const AIChatModal = ({ isOpen, onClose }) => {
               className={`flex ${msg.sender === 'User' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-md px-4 py-2 rounded-lg ${
-                  msg.sender === 'User'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200 text-gray-800'
-                }`}
+                className={`max-w-md px-4 py-2 rounded-lg ${msg.sender === 'User'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-200 text-gray-800'
+                  }`}
               >
                 {msg.sender === 'AI' && (
                   <div className="flex items-center gap-2 mb-1">

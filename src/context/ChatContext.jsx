@@ -10,7 +10,7 @@ export const useChat = () => useContext(ChatContext);
 export const ChatProvider = ({ children }) => {
   const { socket } = useSocket();
   const { isAuthenticated, user } = useAuth();
-  
+
   const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -28,7 +28,7 @@ export const ChatProvider = ({ children }) => {
         const toSelect = conversationsData.find(c => c._id === selectId);
         if (toSelect) setSelectedConversation(toSelect);
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to load conversations.');
     } finally {
       setLoading(false);
@@ -44,7 +44,7 @@ export const ChatProvider = ({ children }) => {
     try {
       const response = await messageAPI.getMessages(conversationId);
       setMessages(Array.isArray(response.data) ? response.data : []);
-    } catch (error) {
+    } catch {
       toast.error('Failed to load messages.');
     } finally {
       setLoading(false);
@@ -60,16 +60,16 @@ export const ChatProvider = ({ children }) => {
         formData.append('conversationId', selectedConversation._id);
         formData.append('text', text || '');
         formData.append('media', media);
-        
+
         const response = await messageAPI.sendMedia(formData);
         console.log('✅ Media message sent, response:', response.data);
-        
+
         // Handle both response formats: { message: {...} } or just the message object
         const newMessage = response.data.message || response.data;
-        
+
         if (newMessage && newMessage._id) {
           console.log('✅ Adding media message to UI:', newMessage._id);
-          
+
           // Immediately add the message to the UI (optimistic update)
           setMessages(prev => {
             // Check if message already exists
@@ -78,18 +78,18 @@ export const ChatProvider = ({ children }) => {
             }
             return prev;
           });
-          
+
           // Update conversation list with new last message
           setConversations(prev => {
-            const newConvos = prev.map(c => 
-              c._id === selectedConversation._id 
-                ? { ...c, lastMessage: newMessage, updatedAt: newMessage.createdAt || new Date() } 
+            const newConvos = prev.map(c =>
+              c._id === selectedConversation._id
+                ? { ...c, lastMessage: newMessage, updatedAt: newMessage.createdAt || new Date() }
                 : c
             );
             // Sort conversations by most recent
             return newConvos.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
           });
-          
+
           // Emit socket event so other users get the message
           if (socket?.connected) {
             socket.emit('new-message-broadcast', {
@@ -114,23 +114,23 @@ export const ChatProvider = ({ children }) => {
       toast.error('Failed to send message.');
     }
   };
-  
+
   useEffect(() => {
     if (isAuthenticated) fetchConversations();
   }, [isAuthenticated, fetchConversations]);
-  
+
   useEffect(() => {
     if (selectedConversation?._id) {
       fetchMessages(selectedConversation._id);
       setTypingUsers({});
-      
+
       // Join the conversation room for real-time updates
       if (socket?.connected) {
         socket.emit('join-conversation', selectedConversation._id);
         console.log('🚪 Joined conversation room:', selectedConversation._id);
       }
     }
-    
+
     // Cleanup: leave room when switching conversations
     return () => {
       if (selectedConversation?._id && socket?.connected) {
@@ -151,7 +151,7 @@ export const ChatProvider = ({ children }) => {
         return prev;
       });
       setConversations(prev => {
-        const newConvos = prev.map(c => 
+        const newConvos = prev.map(c =>
           c._id === conversationId ? { ...c, lastMessage: message, updatedAt: message.createdAt } : c
         );
         return newConvos.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
@@ -177,7 +177,7 @@ export const ChatProvider = ({ children }) => {
     socket.on('new-message', handleNewMessage);
     socket.on('user-typing', handleUserTyping);
     socket.on('user-stopped-typing', handleUserStoppedTyping);
-    
+
     return () => {
       socket.off('new-message', handleNewMessage);
       socket.off('user-typing', handleUserTyping);

@@ -10,12 +10,11 @@ import Loader from '../common/Loader';
 import GroupSettingsModal from '../conversations/GroupSettingsModal';
 import ForwardMessageModal from './ForwardMessageModal';
 import { messageAPI } from '../../services/api';
-import { useWebRTC } from '../../hooks/useWebRTC';
 import toast from 'react-hot-toast';
 
 const ChatArea = () => {
   const { selectedConversation, messages, typingUsers, loading, setMessages } = useChat();
-  const { socket, onlineUsers } = useSocket();
+  const { socket } = useSocket();
   const { user } = useAuth();
 
   const [replyingTo, setReplyingTo] = useState(null);
@@ -35,9 +34,9 @@ const ChatArea = () => {
 
   if (!selectedConversation) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-linear-to-br from-gray-50 to-gray-100">
+      <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="text-center px-4">
-          <div className="bg-linear-to-br from-blue-500 to-purple-600 w-32 h-32 rounded-full mx-auto mb-6 flex items-center justify-center shadow-lg">
+          <div className="bg-gradient-to-br from-blue-500 to-purple-600 w-32 h-32 rounded-full mx-auto mb-6 flex items-center justify-center shadow-lg">
             <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
@@ -93,7 +92,7 @@ const ChatArea = () => {
     try {
       if (deleteType === 'forEveryone') {
         console.log('📤 Emitting delete for everyone via socket...');
-        
+
         // Emit socket event for real-time delete
         socket?.emit('message-deleted', {
           messageId,
@@ -102,18 +101,18 @@ const ChatArea = () => {
 
         // Optimistically remove from UI
         setMessages((prev) => prev.filter((msg) => msg._id !== messageId));
-        
+
         toast.success('Message deleted for everyone');
         console.log('✅ Delete for everyone emitted');
       } else {
         console.log('📤 Calling API to delete for me...');
-        
+
         // Delete for me via API
         await messageAPI.deleteForMe(messageId);
-        
+
         // Remove from UI
         setMessages((prev) => prev.filter((msg) => msg._id !== messageId));
-        
+
         toast.success('Message deleted for you');
         console.log('✅ Delete for me completed');
       }
@@ -189,9 +188,9 @@ const ChatArea = () => {
       );
 
       console.log('📤 Emitting reaction via socket...');
-      socket.emit('message-reaction', { 
-        messageId, 
-        emoji 
+      socket.emit('message-reaction', {
+        messageId,
+        emoji
       });
       console.log('✅ Reaction emitted and UI updated instantly');
       console.log('========================================');

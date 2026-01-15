@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useChat } from '../../hooks/useChat';
 import { useSocket } from '../../hooks/useSocket';
-import { messageAPI, aiAPI } from '../../services/api';
+import { messageAPI } from '../../services/api';
 import toast from 'react-hot-toast';
 import { Send, Paperclip, Smile, X, Sparkles } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
@@ -16,7 +16,7 @@ const MessageInput = ({ replyingTo, onCancelReply, editingMessage, onCancelEdit 
   const [isSending, setIsSending] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  
+
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
 
@@ -31,7 +31,7 @@ const MessageInput = ({ replyingTo, onCancelReply, editingMessage, onCancelEdit 
       setText('');
     }
   }, [editingMessage]);
-  
+
   // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
@@ -64,7 +64,7 @@ const MessageInput = ({ replyingTo, onCancelReply, editingMessage, onCancelEdit 
       typingTimeoutRef.current = null;
     }, 3000);
   };
-  
+
   const stopTyping = () => {
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
@@ -89,7 +89,7 @@ const MessageInput = ({ replyingTo, onCancelReply, editingMessage, onCancelEdit 
     if ((!text.trim() && !selectedFile) || !selectedConversation) {
       return;
     }
-    
+
     setIsSending(true);
     stopTyping(); // Stop typing indicator when message is sent
 
@@ -109,10 +109,10 @@ const MessageInput = ({ replyingTo, onCancelReply, editingMessage, onCancelEdit 
       } else {
         await sendMessage(text.trim(), selectedFile);
       }
-      
+
       setText('');
       clearFile();
-    } catch (error) {
+    } catch {
       toast.error('Failed to send message');
     } finally {
       setIsSending(false);
@@ -139,12 +139,12 @@ const MessageInput = ({ replyingTo, onCancelReply, editingMessage, onCancelEdit 
     setText((prev) => prev + emojiObject.emoji);
     setShowEmojiPicker(false);
   };
-  
+
   const handleSuggestionClick = (suggestion) => {
     setText(suggestion);
     setShowSuggestions(false);
   };
-  
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {

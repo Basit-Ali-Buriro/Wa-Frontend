@@ -15,9 +15,9 @@ const Sidebar = () => {
   const [showProfile, setShowProfile] = useState(false);
 
   return (
-    <div className="w-16 bg-linear-to-b from-blue-600 to-purple-600 flex flex-col items-center py-4 gap-4">
+    <div className="w-16 bg-gradient-to-b from-blue-600 to-purple-600 flex flex-col items-center py-4 gap-4">
       {/* Logo */}
-      <div className="bg-linear-to-b from-blue-600 to-purple-600 bg-opacity-20 p-2 rounded-full  shadow-3xl shadow-white">
+      <div className="bg-gradient-to-br from-blue-400 to-purple-400 bg-opacity-20 p-2 rounded-full shadow-lg">
         <MessageCircleCode size={32} className="text-white" />
       </div>
 
@@ -27,7 +27,7 @@ const Sidebar = () => {
       {/* Call History */}
       <button
         onClick={() => setShowCallHistory(true)}
-        className="p-3 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors text-white"
+        className="p-3 hover:bg-white/20 rounded-full transition-colors text-white"
         title="Call History"
       >
         <Phone size={24} />
@@ -36,7 +36,7 @@ const Sidebar = () => {
       {/* AI Chat */}
       <button
         onClick={() => setShowAIChat(true)}
-        className="p-3 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors text-white"
+        className="p-3 hover:bg-white/20 rounded-full transition-colors text-white"
         title="AI Assistant"
       >
         <Bot size={24} />
@@ -45,7 +45,7 @@ const Sidebar = () => {
       {/* Settings */}
       <button
         onClick={() => setShowSettings(true)}
-        className="p-3 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors text-white"
+        className="p-3 hover:bg-white/20 rounded-full transition-colors text-white"
         title="Auto-Reply Settings"
       >
         <Settings size={24} />
@@ -63,7 +63,7 @@ const Sidebar = () => {
       {/* Logout */}
       <button
         onClick={logout}
-        className="p-3 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors text-white"
+        className="p-3 hover:bg-white/20 rounded-full transition-colors text-white"
         title="Logout"
       >
         <LogOut size={24} />

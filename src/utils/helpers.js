@@ -1,5 +1,8 @@
 import { formatDistanceToNow, format, isToday, isYesterday } from 'date-fns';
 
+// File size limit (50MB) - matches backend limit
+const MAX_FILE_SIZE = 50 * 1024 * 1024;
+
 export const formatMessageTime = (date) => {
   const messageDate = new Date(date);
   

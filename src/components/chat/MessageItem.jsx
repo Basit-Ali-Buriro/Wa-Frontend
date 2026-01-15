@@ -45,7 +45,7 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
 
     const { type, status, duration } = message.callInfo;
     const isVideo = type === 'video';
-    
+
     let Icon = Phone;
     let iconColor = 'text-gray-600';
     let callType = isVideo ? 'Video call' : 'Audio call';
@@ -115,25 +115,24 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
   };
 
   return (
-    <div 
+    <div
       ref={messageRef}
       className={`flex gap-2 mb-4 relative ${isSender ? 'flex-row-reverse' : 'flex-row'}`}
     >
       {/* Avatar */}
       {!isSender && (
-        <Avatar 
-          src={message.sender.avatarUrl} 
-          name={message.sender.name} 
-          size="sm" 
+        <Avatar
+          src={message.sender.avatarUrl}
+          name={message.sender.name}
+          size="sm"
         />
       )}
 
       <div className={`max-w-md flex flex-col ${isSender ? 'items-end' : 'items-start'}`}>
         {/* Reply preview */}
         {message.replyTo && (
-          <div className={`${
-            isSender ? 'bg-blue-100' : 'bg-gray-100'
-          } border-l-4 border-blue-500 px-3 py-2 mb-1 rounded text-sm max-w-xs`}>
+          <div className={`${isSender ? 'bg-blue-100' : 'bg-gray-100'
+            } border-l-4 border-blue-500 px-3 py-2 mb-1 rounded text-sm max-w-xs`}>
             <p className="text-xs text-gray-600 font-medium">
               {message.replyTo.sender?.name || 'Unknown'}
             </p>
@@ -155,11 +154,10 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
           {/* Message bubble - DOUBLE CLICK HERE */}
           <div
             onDoubleClick={handleDoubleClick}
-            className={`px-4 py-2 rounded-lg shadow-md cursor-pointer select-none transition-all ${
-              isSender
+            className={`px-4 py-2 rounded-lg shadow-md cursor-pointer select-none transition-all ${isSender
                 ? 'bg-blue-500 text-white hover:bg-blue-600'
                 : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-            } ${showActions ? 'ring-2 ring-blue-400' : ''}`}
+              } ${showActions ? 'ring-2 ring-blue-400' : ''}`}
             title="Double-click for actions"
           >
             {/* Sender name in groups */}
@@ -173,31 +171,28 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
             {message.callInfo && (() => {
               const callInfo = getCallInfo();
               if (!callInfo) return null;
-              
+
               return (
                 <div className="flex items-center gap-3 py-1">
                   <callInfo.Icon size={24} className={callInfo.iconColor} />
                   <div className="flex flex-col">
                     <div className="flex items-center gap-2">
-                      <span className={`text-sm font-medium ${
-                        isSender ? 'text-white' : 'text-gray-900'
-                      }`}>
+                      <span className={`text-sm font-medium ${isSender ? 'text-white' : 'text-gray-900'
+                        }`}>
                         {callInfo.callType}
                       </span>
                       {callInfo.statusText && (
-                        <span className={`text-xs ${
-                          callInfo.iconColor === 'text-red-500' 
+                        <span className={`text-xs ${callInfo.iconColor === 'text-red-500'
                             ? (isSender ? 'text-red-200' : 'text-red-600')
                             : (isSender ? 'text-blue-200' : 'text-gray-600')
-                        }`}>
+                          }`}>
                           ({callInfo.statusText})
                         </span>
                       )}
                     </div>
                     {callInfo.durationText && (
-                      <span className={`text-xs mt-0.5 ${
-                        isSender ? 'text-blue-100' : 'text-gray-600'
-                      }`}>
+                      <span className={`text-xs mt-0.5 ${isSender ? 'text-blue-100' : 'text-gray-600'
+                        }`}>
                         {callInfo.durationText}
                       </span>
                     )}
@@ -222,9 +217,9 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
                         }}
                       />
                     ) : item.type === 'video' ? (
-                      <video 
-                        src={item.url} 
-                        controls 
+                      <video
+                        src={item.url}
+                        controls
                         className="max-w-xs max-h-64 rounded"
                         onClick={(e) => e.stopPropagation()}
                       />
@@ -236,7 +231,7 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
 
             {/* Text */}
             {message.text && (
-              <p className="wrap-break-word whitespace-pre-wrap">{message.text}</p>
+              <p className="break-words whitespace-pre-wrap">{message.text}</p>
             )}
 
             {/* Edited indicator */}
@@ -263,10 +258,9 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
 
           {/* ✅ ACTION BUTTONS - Show on double-click */}
           {showActions && (
-            <div className={`absolute ${
-              isSender ? 'left-0 -translate-x-full -ml-2' : 'right-0 translate-x-full mr-2'
-            } top-0 flex items-center gap-1 animate-fadeIn z-10`}>
-              
+            <div className={`absolute ${isSender ? 'left-0 -translate-x-full -ml-2' : 'right-0 translate-x-full mr-2'
+              } top-0 flex items-center gap-1 animate-fadeIn z-10`}>
+
               {/* Reply button */}
               <button
                 onClick={() => {
@@ -295,12 +289,11 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
 
                 {/* Dropdown menu */}
                 {showMenu && (
-                  <div 
-                    className={`absolute ${
-                      isSender ? 'right-0' : 'left-0'
-                    } top-full mt-1 bg-white rounded-lg shadow-xl border border-gray-200 py-1 w-56 z-50 animate-slideDown`}
+                  <div
+                    className={`absolute ${isSender ? 'right-0' : 'left-0'
+                      } top-full mt-1 bg-white rounded-lg shadow-xl border border-gray-200 py-1 w-56 z-50 animate-slideDown`}
                   >
-                    
+
                     {/* Forward */}
                     <button
                       onClick={() => {
@@ -394,9 +387,8 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
                 {/* Reaction picker popup */}
                 {showReactionPicker && (
                   <div
-                    className={`absolute ${
-                      isSender ? 'right-0' : 'left-0'
-                    } bottom-full mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-2 flex gap-1 animate-slideDown z-50`}
+                    className={`absolute ${isSender ? 'right-0' : 'left-0'
+                      } bottom-full mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-2 flex gap-1 animate-slideDown z-50`}
                   >
                     {reactions.map((emoji) => (
                       <button

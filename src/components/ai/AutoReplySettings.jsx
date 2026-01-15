@@ -21,7 +21,7 @@ const AutoReplySettings = ({ isOpen, onClose }) => {
     try {
       const response = await aiAPI.getAutoReplySettings();
       setSettings(response.data.autoReply);
-    } catch (error) {
+    } catch {
       toast.error('Failed to load settings');
     }
   };
@@ -32,7 +32,7 @@ const AutoReplySettings = ({ isOpen, onClose }) => {
       await aiAPI.updateAutoReply(settings);
       toast.success('Settings updated!');
       onClose();
-    } catch (error) {
+    } catch {
       toast.error('Failed to update settings');
     } finally {
       setLoading(false);
@@ -46,14 +46,12 @@ const AutoReplySettings = ({ isOpen, onClose }) => {
           <label className="text-gray-700 font-medium">Enable Auto-Reply</label>
           <button
             onClick={() => setSettings({ ...settings, enabled: !settings.enabled })}
-            className={`relative w-12 h-6 rounded-full transition-colors ${
-              settings.enabled ? 'bg-blue-500' : 'bg-gray-300'
-            }`}
+            className={`relative w-12 h-6 rounded-full transition-colors ${settings.enabled ? 'bg-blue-500' : 'bg-gray-300'
+              }`}
           >
             <span
-              className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${
-                settings.enabled ? 'transform translate-x-6' : ''
-              }`}
+              className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${settings.enabled ? 'transform translate-x-6' : ''
+                }`}
             ></span>
           </button>
         </div>
@@ -65,11 +63,10 @@ const AutoReplySettings = ({ isOpen, onClose }) => {
               {['friendly', 'professional', 'funny'].map((mode) => (
                 <label
                   key={mode}
-                  className={`flex items-center p-3 border-2 rounded-lg cursor-pointer transition-colors ${
-                    settings.mode === mode
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-300 hover:border-gray-400'
-                  }`}
+                  className={`flex items-center p-3 border-2 rounded-lg cursor-pointer transition-colors ${settings.mode === mode
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-gray-300 hover:border-gray-400'
+                    }`}
                 >
                   <input
                     type="radio"

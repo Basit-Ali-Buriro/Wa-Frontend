@@ -22,6 +22,17 @@ const Header = () => {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
 
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   if (!selectedConversation) {
     return null;
   }
@@ -64,45 +75,34 @@ const Header = () => {
   const handleDeleteConversation = async () => {
     console.log('🗑️ Delete conversation clicked');
     console.log('Selected conversation:', selectedConversation);
-    
+
     if (!window.confirm('Are you sure you want to delete this conversation? This action cannot be undone.')) {
       console.log('❌ User cancelled deletion');
       return;
     }
 
     console.log('✅ User confirmed deletion');
-    
+
     try {
       console.log('📤 Calling delete API...');
       await conversationAPI.delete(selectedConversation._id);
       console.log('✅ Conversation deleted successfully');
-      
+
       toast.success('Conversation deleted successfully');
       setSelectedConversation(null);
-      
+
       // Refresh conversations list
       if (fetchConversations) {
         console.log('🔄 Refreshing conversations...');
         fetchConversations();
       }
-      
+
       setShowMenu(false);
     } catch (error) {
       console.error('❌ Failed to delete conversation:', error);
       toast.error(error.response?.data?.msg || 'Failed to delete conversation');
     }
   };
-
-  // Close menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setShowMenu(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   return (
     <>
@@ -116,7 +116,7 @@ const Header = () => {
           <ArrowLeft size={20} className="text-gray-600" />
         </button>
 
-        <div 
+        <div
           className="flex items-center gap-3 cursor-pointer hover:bg-gray-200 p-2 rounded-lg transition-colors flex-1 min-w-0"
           onClick={() => {
             if (selectedConversation.isGroup) {
@@ -153,7 +153,7 @@ const Header = () => {
 
           {!selectedConversation.isGroup && (
             <>
-              <button 
+              <button
                 onClick={() => {
                   const recipientId = selectedConversation.participants.find(p => p._id !== user._id)?._id;
                   if (recipientId) {
@@ -166,7 +166,7 @@ const Header = () => {
               >
                 <Phone size={20} className="text-gray-600" />
               </button>
-              <button 
+              <button
                 onClick={() => {
                   const recipientId = selectedConversation.participants.find(p => p._id !== user._id)?._id;
                   if (recipientId) {
@@ -183,7 +183,7 @@ const Header = () => {
           )}
 
           <div className="relative" ref={menuRef}>
-            <button 
+            <button
               onClick={(e) => {
                 e.stopPropagation();
                 console.log('🖱️ Three dots clicked, current state:', showMenu);
