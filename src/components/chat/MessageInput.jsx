@@ -239,8 +239,10 @@ const MessageInput = ({ replyingTo, onCancelReply, editingMessage, onCancelEdit 
       </form>
 
       {showEmojiPicker && (
-        <div ref={emojiPickerRef} className="absolute bottom-20 right-4 z-50">
-          <EmojiPicker onEmojiClick={handleEmojiClick} />
+        <div ref={emojiPickerRef} className="absolute bottom-full mb-2 left-0 right-0 md:left-auto md:right-4 z-50 flex justify-center md:justify-end">
+          <div className="max-w-[min(350px,calc(100vw-2rem))]">
+            <EmojiPicker onEmojiClick={handleEmojiClick} />
+          </div>
         </div>
       )}
     </div>

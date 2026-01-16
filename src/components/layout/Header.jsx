@@ -198,7 +198,7 @@ const Header = () => {
             </button>
 
             {showMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+              <div className="absolute right-0 mt-2 w-48 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-xl border border-gray-200 py-1 z-[100]">
                 {selectedConversation.isGroup && (
                   <button
                     onClick={(e) => {
@@ -207,7 +207,7 @@ const Header = () => {
                       setShowGroupSettings(true);
                       setShowMenu(false);
                     }}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2"
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-sm"
                   >
                     <UserCircle size={18} />
                     <span>Group Settings</span>
@@ -219,7 +219,7 @@ const Header = () => {
                     console.log('🗑️ Delete conversation clicked from menu');
                     handleDeleteConversation();
                   }}
-                  className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 flex items-center gap-2"
+                  className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 flex items-center gap-2 text-sm"
                 >
                   <Trash2 size={18} />
                   <span>Delete Conversation</span>

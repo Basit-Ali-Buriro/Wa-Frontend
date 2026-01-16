@@ -106,8 +106,8 @@ const NewChatModal = ({ onClose }) => {
       console.log('✅ Response received:', response);
       console.log('✅ Conversation data:', response.data);
 
-      await fetchConversations();
-      setSelectedConversation(response.data);
+      // Refresh conversations and auto-select the newly created one
+      await fetchConversations(response.data._id);
 
       toast.success(`Chat started with ${selectedUser.name}`);
       onClose();
@@ -178,8 +178,8 @@ const NewChatModal = ({ onClose }) => {
                 key={selectedUser._id}
                 onClick={() => !creating && handleCreateChat(selectedUser)}
                 className={`flex items-center gap-3 p-3 rounded-lg transition-all ${creating
-                    ? 'opacity-50 cursor-not-allowed'
-                    : 'hover:bg-gray-100 cursor-pointer hover:shadow-sm'
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:bg-gray-100 cursor-pointer hover:shadow-sm'
                   }`}
               >
                 <Avatar

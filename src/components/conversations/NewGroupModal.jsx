@@ -29,12 +29,12 @@ const NewGroupModal = ({ onClose }) => {
     try {
       console.log('📋 Fetching all users for group...');
       const response = await userAPI.getAllUsers();
-      
+
       // Filter out current user
       const filteredUsers = Array.isArray(response.data)
         ? response.data.filter((u) => u._id !== user._id)
         : [];
-      
+
       console.log('👥 Available users for group:', filteredUsers.length);
       setUsers(filteredUsers);
     } catch (error) {
@@ -48,7 +48,7 @@ const NewGroupModal = ({ onClose }) => {
 
   const handleSearch = async (query) => {
     setSearchQuery(query);
-    
+
     if (!query || !query.trim()) {
       console.log('🔄 Search cleared, fetching all users');
       fetchAllUsers();
@@ -59,12 +59,12 @@ const NewGroupModal = ({ onClose }) => {
     try {
       console.log('🔍 Searching for:', query);
       const response = await userAPI.searchUsers(query);
-      
+
       // Filter out current user
       const filteredUsers = Array.isArray(response.data)
         ? response.data.filter((u) => u._id !== user._id)
         : [];
-      
+
       console.log('👥 Search results:', filteredUsers.length);
       setUsers(filteredUsers);
     } catch (error) {
@@ -111,7 +111,7 @@ const NewGroupModal = ({ onClose }) => {
     }
 
     setCreating(true);
-    
+
     try {
       // Prepare payload matching backend expectations
       const payload = {
@@ -123,15 +123,12 @@ const NewGroupModal = ({ onClose }) => {
       console.log('📤 Sending request to create group...');
 
       const response = await conversationAPI.createGroup(payload);
-      
+
       console.log('✅ Group created successfully:', response.data);
 
-      // Refresh conversations list
-      await fetchConversations();
-      
-      // Select the newly created group
-      setSelectedConversation(response.data);
-      
+      // Refresh conversations and auto-select the newly created group
+      await fetchConversations(response.data._id);
+
       toast.success(`Group "${groupName}" created successfully!`);
       console.log('========================================');
       onClose();
@@ -144,10 +141,10 @@ const NewGroupModal = ({ onClose }) => {
       console.error('Error response data:', error.response?.data);
       console.error('Error message:', error.message);
       console.error('========================================');
-      
-      const errorMessage = error.response?.data?.msg || 
-                          error.response?.data?.message || 
-                          'Failed to create group';
+
+      const errorMessage = error.response?.data?.msg ||
+        error.response?.data?.message ||
+        'Failed to create group';
       toast.error(errorMessage);
     } finally {
       setCreating(false);
@@ -185,7 +182,7 @@ const NewGroupModal = ({ onClose }) => {
                   className="flex items-center gap-2 bg-blue-500 text-white px-3 py-1.5 rounded-full text-sm shadow-sm"
                 >
                   <span className="font-medium">{selectedUser.name}</span>
-                  <button 
+                  <button
                     onClick={() => toggleUserSelection(selectedUser)}
                     className="hover:bg-blue-600 rounded-full p-0.5 transition-colors"
                     disabled={creating}
@@ -264,16 +261,15 @@ const NewGroupModal = ({ onClose }) => {
                   <div
                     key={selectedUser._id}
                     onClick={() => !creating && toggleUserSelection(selectedUser)}
-                    className={`flex items-center gap-3 p-3 cursor-pointer transition-all ${
-                      isSelected 
-                        ? 'bg-blue-50 border-l-4 border-blue-500' 
+                    className={`flex items-center gap-3 p-3 cursor-pointer transition-all ${isSelected
+                        ? 'bg-blue-50 border-l-4 border-blue-500'
                         : 'hover:bg-gray-50 border-l-4 border-transparent'
-                    } ${creating ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      } ${creating ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
-                    <Avatar 
-                      src={selectedUser.avatarUrl} 
-                      name={selectedUser.name} 
-                      size="md" 
+                    <Avatar
+                      src={selectedUser.avatarUrl}
+                      name={selectedUser.name}
+                      size="md"
                     />
                     <div className="flex-1 min-w-0">
                       <h4 className="font-medium text-gray-800 truncate">
@@ -285,15 +281,15 @@ const NewGroupModal = ({ onClose }) => {
                     </div>
                     {isSelected && (
                       <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                        <svg 
-                          className="w-4 h-4 text-white" 
-                          fill="currentColor" 
+                        <svg
+                          className="w-4 h-4 text-white"
+                          fill="currentColor"
                           viewBox="0 0 20 20"
                         >
-                          <path 
-                            fillRule="evenodd" 
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" 
-                            clipRule="evenodd" 
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
                           />
                         </svg>
                       </div>
@@ -334,7 +330,7 @@ const NewGroupModal = ({ onClose }) => {
 
         {/* Helper text */}
         <p className="text-xs text-gray-500 text-center">
-          {selectedUsers.length < 2 
+          {selectedUsers.length < 2
             ? `Select at least ${2 - selectedUsers.length} more participant${2 - selectedUsers.length > 1 ? 's' : ''} to create a group`
             : `Ready to create group with ${selectedUsers.length} participants`
           }

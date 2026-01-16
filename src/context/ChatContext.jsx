@@ -110,29 +110,11 @@ export const ChatProvider = ({ children }) => {
         }
 
         console.log('📤 Sending text message via socket...');
-
-        // Create temporary message for optimistic update
-        const tempMessage = {
-          _id: `temp-${Date.now()}-${Math.random()}`,
-          text: text.trim(),
-          sender: {
-            _id: user._id,
-            name: user.name,
-            avatarUrl: user.avatarUrl
-          },
-          conversation: selectedConversation._id,
-          createdAt: new Date().toISOString(),
-          status: 'sending'
-        };
-
-        // Add message to UI immediately (optimistic update)
-        setMessages(prev => [...prev, tempMessage]);
-
-        // Emit socket event with temp ID for replacement
+        // No optimistic update for text messages - wait for socket response
+        // This prevents duplicate messages (sender gets their own message back from socket)
         socket.emit('send-message', {
           conversationId: selectedConversation._id,
           text: text.trim(),
-          tempId: tempMessage._id
         });
       }
     } catch (error) {
