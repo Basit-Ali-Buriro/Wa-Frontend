@@ -11,6 +11,7 @@ const VideoCallInterface = () => {
 
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
+  const remoteAudioRef = useRef(null);
 
   useEffect(() => {
     if (localStream && localVideoRef.current) {
@@ -21,6 +22,9 @@ const VideoCallInterface = () => {
   useEffect(() => {
     if (remoteStream && remoteVideoRef.current) {
       remoteVideoRef.current.srcObject = remoteStream;
+    }
+    if (remoteStream && remoteAudioRef.current) {
+      remoteAudioRef.current.srcObject = remoteStream;
     }
   }, [remoteStream]);
 
@@ -37,7 +41,13 @@ const VideoCallInterface = () => {
   };
 
   const toggleVideo = () => {
-    setIsVideoOff(prev => !prev);
+    if (localStream) {
+      const videoTrack = localStream.getVideoTracks()[0];
+      if (videoTrack) {
+        videoTrack.enabled = !videoTrack.enabled;
+        setIsVideoOff(!videoTrack.enabled);
+      }
+    }
   };
 
   const switchCamera = async () => {
@@ -90,7 +100,7 @@ const VideoCallInterface = () => {
         ) : remoteStream && activeCall.callType === 'voice' ? (
           <>
             <audio
-              ref={remoteVideoRef}
+              ref={remoteAudioRef}
               autoPlay
               playsInline
               className="hidden"

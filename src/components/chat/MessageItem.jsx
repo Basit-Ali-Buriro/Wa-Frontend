@@ -155,8 +155,8 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
           <div
             onDoubleClick={handleDoubleClick}
             className={`px-4 py-2 rounded-lg shadow-md cursor-pointer select-none transition-all ${isSender
-                ? 'bg-blue-500 text-white hover:bg-blue-600'
-                : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+              ? 'bg-blue-500 text-white hover:bg-blue-600'
+              : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
               } ${showActions ? 'ring-2 ring-blue-400' : ''}`}
             title="Double-click for actions"
           >
@@ -183,8 +183,8 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
                       </span>
                       {callInfo.statusText && (
                         <span className={`text-xs ${callInfo.iconColor === 'text-red-500'
-                            ? (isSender ? 'text-red-200' : 'text-red-600')
-                            : (isSender ? 'text-blue-200' : 'text-gray-600')
+                          ? (isSender ? 'text-red-200' : 'text-red-600')
+                          : (isSender ? 'text-blue-200' : 'text-gray-600')
                           }`}>
                           ({callInfo.statusText})
                         </span>
@@ -258,8 +258,8 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
 
           {/* ✅ ACTION BUTTONS - Show on double-click */}
           {showActions && (
-            <div className={`absolute ${isSender ? 'left-0 -translate-x-full -ml-2' : 'right-0 translate-x-full mr-2'
-              } top-0 flex items-center gap-1 animate-fadeIn z-10`}>
+            <div className={`absolute ${isSender ? 'sm:left-0 sm:-translate-x-full sm:-ml-2 left-0 -top-12' : 'sm:right-0 sm:translate-x-full sm:mr-2 right-0 -top-12'
+              } sm:top-0 flex sm:flex-col flex-row items-center gap-1 animate-fadeIn z-10`}>
 
               {/* Reply button */}
               <button
@@ -268,7 +268,7 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
                   onReply(message);
                   setShowActions(false);
                 }}
-                className="p-2 bg-white rounded-full shadow-lg hover:bg-blue-50 hover:scale-110 transition-all border border-gray-200"
+                className="p-2.5 sm:p-2 bg-white rounded-full shadow-lg hover:bg-blue-50 hover:scale-110 transition-all border border-gray-200"
                 title="Reply"
               >
                 <Reply size={18} className="text-blue-600" />
@@ -281,7 +281,7 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
                     console.log('🔘 Menu clicked');
                     setShowMenu(!showMenu);
                   }}
-                  className="p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 hover:scale-110 transition-all border border-gray-200"
+                  className="p-2.5 sm:p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 hover:scale-110 transition-all border border-gray-200"
                   title="More options"
                 >
                   <MoreVertical size={18} className="text-gray-600" />
@@ -291,7 +291,7 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
                 {showMenu && (
                   <div
                     className={`absolute ${isSender ? 'right-0' : 'left-0'
-                      } top-full mt-1 bg-white rounded-lg shadow-xl border border-gray-200 py-1 w-56 z-50 animate-slideDown`}
+                      } top-full mt-1 bg-white rounded-lg shadow-xl border border-gray-200 py-1 w-48 sm:w-56 max-w-[90vw] z-50 animate-slideDown`}
                   >
 
                     {/* Forward */}
@@ -378,7 +378,7 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
                     console.log('😊 React picker toggled');
                     setShowReactionPicker(!showReactionPicker);
                   }}
-                  className="p-2 bg-white rounded-full shadow-lg hover:bg-yellow-50 hover:scale-110 transition-all border border-gray-200"
+                  className="p-2.5 sm:p-2 bg-white rounded-full shadow-lg hover:bg-yellow-50 hover:scale-110 transition-all border border-gray-200"
                   title="React"
                 >
                   <Smile size={18} className="text-yellow-600" />
@@ -412,7 +412,7 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
               {/* Close button */}
               <button
                 onClick={() => setShowActions(false)}
-                className="p-2 bg-white rounded-full shadow-lg hover:bg-red-50 hover:scale-110 transition-all border border-gray-200"
+                className="p-2.5 sm:p-2 bg-white rounded-full shadow-lg hover:bg-red-50 hover:scale-110 transition-all border border-gray-200"
                 title="Close"
               >
                 <X size={18} className="text-red-600" />

@@ -12,7 +12,7 @@ import toast from 'react-hot-toast';
 const GroupSettingsModal = ({ conversation, onClose }) => {
   const { user } = useAuth();
   const { fetchConversations, setSelectedConversation } = useChat();
-  
+
   const [groupName, setGroupName] = useState(conversation.groupName || '');
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -59,12 +59,12 @@ const GroupSettingsModal = ({ conversation, onClose }) => {
 
     setLoading(true);
     try {
-      const response = await conversationAPI.renameGroup(conversation._id, { 
-        newName: groupName.trim() 
+      const response = await conversationAPI.renameGroup(conversation._id, {
+        newName: groupName.trim()
       });
-      
+
       console.log('✅ Group renamed:', response.data);
-      
+
       await fetchConversations();
       setSelectedConversation(response.data);
       toast.success('Group renamed successfully!');
@@ -164,13 +164,13 @@ const GroupSettingsModal = ({ conversation, onClose }) => {
   const fetchAvailableUsers = async () => {
     try {
       const response = await userAPI.getAllUsers();
-      
+
       // Filter out users already in the group and current user
       const currentParticipantIds = conversation.participants.map(p => p._id);
       const available = response.data.filter(
         u => !currentParticipantIds.includes(u._id) && u._id !== user._id
       );
-      
+
       setAvailableUsers(available);
       console.log('📋 Available users to add:', available.length);
     } catch (error) {
@@ -202,8 +202,12 @@ const GroupSettingsModal = ({ conversation, onClose }) => {
 
       await fetchConversations();
       setSelectedConversation(response.data);
+
+      // Refresh available users list to remove the added user
+      await fetchAvailableUsers();
+
       toast.success('Participant added successfully');
-      setShowAddUsers(false);
+      // Don't close the panel, allow adding multiple users
     } catch (error) {
       console.error('❌ Add participant error:', error);
       console.error('Error response:', error.response?.data);
@@ -259,9 +263,9 @@ const GroupSettingsModal = ({ conversation, onClose }) => {
       formData.append('groupAvatar', avatarFile);
 
       const response = await conversationAPI.updateGroupAvatar(conversation._id, formData);
-      
+
       console.log('✅ Avatar updated:', response.data);
-      
+
       await fetchConversations();
       setSelectedConversation(response.data);
       toast.success('Group avatar updated successfully!');
@@ -384,9 +388,9 @@ const GroupSettingsModal = ({ conversation, onClose }) => {
                 disabled={loading}
                 className="flex-1"
               />
-              <Button 
-                onClick={handleRenameGroup} 
-                disabled={loading || !groupName.trim()} 
+              <Button
+                onClick={handleRenameGroup}
+                disabled={loading || !groupName.trim()}
                 size="sm"
               >
                 {loading ? 'Saving...' : 'Save'}
@@ -441,7 +445,7 @@ const GroupSettingsModal = ({ conversation, onClose }) => {
               />
               <div className="max-h-40 overflow-y-auto space-y-1">
                 {availableUsers
-                  .filter(u => 
+                  .filter(u =>
                     u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                     u.email.toLowerCase().includes(searchQuery.toLowerCase())
                   )
@@ -533,9 +537,9 @@ const GroupSettingsModal = ({ conversation, onClose }) => {
 
         {/* Leave Group */}
         <div className="pt-4 border-t border-gray-200">
-          <Button 
-            variant="danger" 
-            className="w-full" 
+          <Button
+            variant="danger"
+            className="w-full"
             onClick={handleLeaveGroup}
             disabled={loading}
           >

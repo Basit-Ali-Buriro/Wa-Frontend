@@ -38,8 +38,17 @@ class WebRTCService {
   async getLocalStream(isVideo = false) {
     try {
       this.localStream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: isVideo,
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        },
+        video: isVideo ? {
+          width: { ideal: 1280, max: 1920 },
+          height: { ideal: 720, max: 1080 },
+          facingMode: 'user',
+          frameRate: { ideal: 30 }
+        } : false,
       });
       return this.localStream;
     } catch (error) {
