@@ -14,12 +14,15 @@ const MainLayout = () => {
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden">
       {/* Mobile Menu Button - Only visible on small screens */}
-      <button
-        onClick={() => setShowMobileMenu(!showMobileMenu)}
-        className="md:hidden fixed top-4 left-4 z-50 p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors"
-      >
-        {showMobileMenu ? <X size={20} /> : <Menu size={20} />}
-      </button>
+      {!selectedConversation && (
+        <button
+          onClick={() => setShowMobileMenu(!showMobileMenu)}
+          className="md:hidden fixed top-4 right-4 z-50 p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all"
+          aria-label={showMobileMenu ? 'Close menu' : 'Open menu'}
+        >
+          {showMobileMenu ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      )}
 
       {/* Mobile Overlay */}
       {showMobileMenu && (

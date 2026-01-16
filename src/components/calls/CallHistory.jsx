@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { callAPI } from '../../services/api';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { Phone, Video, PhoneIncoming, PhoneOutgoing, PhoneMissed, Trash2, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -54,17 +54,17 @@ const CallHistory = ({ isOpen, onClose }) => {
 
   const getCallIcon = (call) => {
     const isOutgoing = call.caller._id === user._id;
-    
+
     if (call.status === 'missed') {
       return <PhoneMissed className="w-5 h-5 text-red-500" />;
     }
-    
+
     if (isOutgoing) {
-      return call.type === 'video' 
+      return call.type === 'video'
         ? <Video className="w-5 h-5 text-green-500" />
         : <PhoneOutgoing className="w-5 h-5 text-green-500" />;
     }
-    
+
     return call.type === 'video'
       ? <Video className="w-5 h-5 text-blue-500" />
       : <PhoneIncoming className="w-5 h-5 text-blue-500" />;
@@ -72,7 +72,7 @@ const CallHistory = ({ isOpen, onClose }) => {
 
   const getCallStatus = (call) => {
     const isOutgoing = call.caller._id === user._id;
-    
+
     switch (call.status) {
       case 'missed':
         return 'Missed';

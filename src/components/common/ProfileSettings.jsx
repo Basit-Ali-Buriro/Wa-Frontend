@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { userAPI } from '../../services/api';
 import { Camera, Save } from 'lucide-react';
 import Modal from './Modal';
@@ -44,7 +44,7 @@ const ProfileSettings = ({ isOpen, onClose }) => {
     }
 
     setAvatarFile(file);
-    
+
     // Create preview
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -65,7 +65,7 @@ const ProfileSettings = ({ isOpen, onClose }) => {
         formData.append('name', name);
         formData.append('bio', bio);
         formData.append('avatar', avatarFile);
-        
+
         console.log('📤 Uploading profile with avatar...');
         response = await userAPI.updateAvatar(formData);
       } else {
@@ -73,14 +73,14 @@ const ProfileSettings = ({ isOpen, onClose }) => {
         console.log('📤 Updating profile without avatar...');
         response = await userAPI.updateProfile({ name, bio, avatarUrl });
       }
-      
+
       console.log('✅ Profile update response:', response.data);
       toast.success('Profile updated successfully');
-      
+
       // Update user state directly with the response data
       console.log('🔄 Updating user state with new data...');
       updateUser(response.data);
-      
+
       // Small delay to ensure state updates, then close
       setTimeout(() => {
         console.log('✅ Profile updated, closing modal');
@@ -122,7 +122,7 @@ const ProfileSettings = ({ isOpen, onClose }) => {
             />
           </div>
           <p className="text-xs text-gray-500 mt-2 sm:mt-3 text-center">Click camera to upload image</p>
-          
+
           <input
             type="url"
             value={avatarUrl}

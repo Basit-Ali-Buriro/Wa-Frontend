@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect, useCallback, useContext } from 'react';
 import { conversationAPI, messageAPI } from '../services/api';
 import { useSocket } from './SocketContext';
-import { useAuth } from './AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import toast from 'react-hot-toast';
 
 export const ChatContext = createContext();
