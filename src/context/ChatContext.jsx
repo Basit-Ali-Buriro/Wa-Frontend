@@ -24,9 +24,14 @@ export const ChatProvider = ({ children }) => {
       const response = await conversationAPI.getAll();
       const conversationsData = Array.isArray(response.data) ? response.data : [];
       setConversations(conversationsData);
+
+      // Auto-select conversation if selectId provided (for new chats)
       if (selectId) {
         const toSelect = conversationsData.find(c => c._id === selectId);
-        if (toSelect) setSelectedConversation(toSelect);
+        if (toSelect) {
+          console.log('✅ Auto-selecting conversation:', selectId);
+          setSelectedConversation(toSelect);
+        }
       }
     } catch {
       toast.error('Failed to load conversations.');
@@ -164,20 +169,22 @@ export const ChatProvider = ({ children }) => {
   useEffect(() => {
     if (!socket) return;
 
-    const handleNewMessage = ({ message, conversationId, tempId }) => {
+    const handleNewMessage = ({ message, conversationId }) => {
+      console.log('📥 Received new message:', message._id);
+
       setMessages(prev => {
         if (selectedConversation?._id === conversationId) {
-          // If tempId provided, replace the temporary message
-          if (tempId) {
-            return prev.map(m => m._id === tempId ? message : m);
-          }
-          // Otherwise, add if not duplicate
+          // Add if not duplicate
           if (!prev.some(m => m._id === message._id)) {
+            console.log('✅ Adding message to UI');
             return [...prev, message];
+          } else {
+            console.log('⚠️ Duplicate message, skipping');
           }
         }
         return prev;
       });
+
       setConversations(prev => {
         const newConvos = prev.map(c =>
           c._id === conversationId ? { ...c, lastMessage: message, updatedAt: message.createdAt } : c
