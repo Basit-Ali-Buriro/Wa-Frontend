@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useWebRTC } from '../../hooks/useWebRTC';
-import { Phone, Mic, MicOff, Video, VideoOff } from 'lucide-react';
+import { Phone, Mic, MicOff, Video, VideoOff, SwitchCamera } from 'lucide-react';
 
 const VideoCallInterface = () => {
   const { activeCall, localStream, remoteStream, endCall, callStatus } = useWebRTC();
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
+  const [facingMode, setFacingMode] = useState('user'); // 'user' for front, 'environment' for back
 
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
@@ -36,12 +37,40 @@ const VideoCallInterface = () => {
   };
 
   const toggleVideo = () => {
-    if (localStream) {
+    setIsVideoOff(prev => !prev);
+  };
+
+  const switchCamera = async () => {
+    if (!localStream || activeCall.callType !== 'video') return;
+
+    try {
+      const newFacingMode = facingMode === 'user' ? 'environment' : 'user';
+
+      // Stop current video track
       const videoTrack = localStream.getVideoTracks()[0];
       if (videoTrack) {
-        videoTrack.enabled = !videoTrack.enabled;
-        setIsVideoOff(!videoTrack.enabled);
+        videoTrack.stop();
       }
+
+      // Get new stream with switched camera
+      const newStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: newFacingMode },
+        audio: true
+      });
+
+      // Replace video track in local stream
+      const newVideoTrack = newStream.getVideoTracks()[0];
+      localStream.removeTrack(videoTrack);
+      localStream.addTrack(newVideoTrack);
+
+      // Update video element
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = localStream;
+      }
+
+      setFacingMode(newFacingMode);
+    } catch (error) {
+      console.error('Failed to switch camera:', error);
     }
   };
 
@@ -86,20 +115,36 @@ const VideoCallInterface = () => {
               </div>
               <p className="text-xl">{activeCall.recipientName || activeCall.callerName || 'Unknown'}</p>
               <p className="text-gray-400 mt-2">{callStatus}...</p>
+
+              {/* Cancel button during ringing (for caller) */}
+              {callStatus === 'ringing' && activeCall.recipientName && (
+                <button
+                  onClick={() => endCall('cancelled')}
+                  className="mt-6 bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-full transition-colors font-semibold"
+                >
+                  Cancel Call
+                </button>
+              )}
             </div>
           </div>
         )}
 
         {/* Local video (picture-in-picture) - Only for video calls */}
-        {activeCall.callType === 'video' && localStream && !isVideoOff && (
+        {activeCall.callType === 'video' && localStream && (
           <div className="absolute top-4 right-4 w-32 h-48 bg-gray-800 rounded-lg overflow-hidden shadow-lg">
-            <video
-              ref={localVideoRef}
-              autoPlay
-              playsInline
-              muted
-              className="w-full h-full object-cover"
-            />
+            {!isVideoOff ? (
+              <video
+                ref={localVideoRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gray-900">
+                <VideoOff size={32} className="text-gray-400" />
+              </div>
+            )}
           </div>
         )}
 
@@ -118,22 +163,32 @@ const VideoCallInterface = () => {
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-4">
           <button
             onClick={toggleMute}
-            className={`p-4 rounded-full transition-colors ${
-              isMuted ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
-            } text-white`}
+            className={`p-4 rounded-full transition-colors ${isMuted ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
+              } text-white`}
           >
             {isMuted ? <MicOff size={24} /> : <Mic size={24} />}
           </button>
 
           {activeCall.callType === 'video' && (
-            <button
-              onClick={toggleVideo}
-              className={`p-4 rounded-full transition-colors ${
-                isVideoOff ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
-              } text-white`}
-            >
-              {isVideoOff ? <VideoOff size={24} /> : <Video size={24} />}
-            </button>
+            <>
+              <button
+                onClick={toggleVideo}
+                className={`p-4 rounded-full transition-colors ${isVideoOff ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
+                  } text-white`}
+              >
+                {isVideoOff ? <VideoOff size={24} /> : <Video size={24} />}
+              </button>
+
+              {!isVideoOff && (
+                <button
+                  onClick={switchCamera}
+                  className="p-4 rounded-full transition-colors bg-gray-700 hover:bg-gray-600 text-white"
+                  title="Switch camera"
+                >
+                  <SwitchCamera size={24} />
+                </button>
+              )}
+            </>
           )}
 
           <button

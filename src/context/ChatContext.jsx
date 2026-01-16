@@ -103,10 +103,31 @@ export const ChatProvider = ({ children }) => {
           toast.error('Not connected. Please refresh.');
           return;
         }
+
         console.log('📤 Sending text message via socket...');
+
+        // Create temporary message for optimistic update
+        const tempMessage = {
+          _id: `temp-${Date.now()}-${Math.random()}`,
+          text: text.trim(),
+          sender: {
+            _id: user._id,
+            name: user.name,
+            avatarUrl: user.avatarUrl
+          },
+          conversation: selectedConversation._id,
+          createdAt: new Date().toISOString(),
+          status: 'sending'
+        };
+
+        // Add message to UI immediately (optimistic update)
+        setMessages(prev => [...prev, tempMessage]);
+
+        // Emit socket event with temp ID for replacement
         socket.emit('send-message', {
           conversationId: selectedConversation._id,
           text: text.trim(),
+          tempId: tempMessage._id
         });
       }
     } catch (error) {
@@ -143,10 +164,17 @@ export const ChatProvider = ({ children }) => {
   useEffect(() => {
     if (!socket) return;
 
-    const handleNewMessage = ({ message, conversationId }) => {
+    const handleNewMessage = ({ message, conversationId, tempId }) => {
       setMessages(prev => {
-        if (selectedConversation?._id === conversationId && !prev.some(m => m._id === message._id)) {
-          return [...prev, message];
+        if (selectedConversation?._id === conversationId) {
+          // If tempId provided, replace the temporary message
+          if (tempId) {
+            return prev.map(m => m._id === tempId ? message : m);
+          }
+          // Otherwise, add if not duplicate
+          if (!prev.some(m => m._id === message._id)) {
+            return [...prev, message];
+          }
         }
         return prev;
       });
