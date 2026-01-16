@@ -161,10 +161,10 @@ const Header = () => {
                     toast.success('Calling...');
                   }
                 }}
-                className="p-2 hover:bg-gray-200 rounded-full transition-colors hidden md:block"
+                className="p-1.5 sm:p-2 hover:bg-gray-200 rounded-full transition-colors"
                 title="Voice call"
               >
-                <Phone size={20} className="text-gray-600" />
+                <Phone size={18} className="text-gray-600 sm:w-5 sm:h-5" />
               </button>
               <button
                 onClick={() => {
@@ -174,10 +174,10 @@ const Header = () => {
                     toast.success('Calling...');
                   }
                 }}
-                className="p-2 hover:bg-gray-200 rounded-full transition-colors hidden md:block"
+                className="p-1.5 sm:p-2 hover:bg-gray-200 rounded-full transition-colors"
                 title="Video call"
               >
-                <Video size={20} className="text-gray-600" />
+                <Video size={18} className="text-gray-600 sm:w-5 sm:h-5" />
               </button>
             </>
           )}
