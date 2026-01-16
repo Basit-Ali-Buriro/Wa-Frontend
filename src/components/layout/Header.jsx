@@ -155,9 +155,10 @@ const Header = () => {
             <>
               <button
                 onClick={() => {
-                  const recipientId = selectedConversation.participants.find(p => p._id !== user._id)?._id;
+                  const otherUser = selectedConversation.participants.find(p => p._id !== user._id);
+                  const recipientId = otherUser?._id;
                   if (recipientId) {
-                    initiateCall(recipientId, 'voice', selectedConversation._id);
+                    initiateCall(recipientId, 'voice', selectedConversation._id, otherUser?.name, otherUser?.avatarUrl);
                     toast.success('Calling...');
                   }
                 }}
@@ -168,9 +169,10 @@ const Header = () => {
               </button>
               <button
                 onClick={() => {
-                  const recipientId = selectedConversation.participants.find(p => p._id !== user._id)?._id;
+                  const otherUser = selectedConversation.participants.find(p => p._id !== user._id);
+                  const recipientId = otherUser?._id;
                   if (recipientId) {
-                    initiateCall(recipientId, 'video', selectedConversation._id);
+                    initiateCall(recipientId, 'video', selectedConversation._id, otherUser?.name, otherUser?.avatarUrl);
                     toast.success('Calling...');
                   }
                 }}

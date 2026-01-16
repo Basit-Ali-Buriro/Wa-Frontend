@@ -39,7 +39,7 @@ const NewChatModal = ({ onClose }) => {
 
   const handleSearch = async (query) => {
     setSearchQuery(query);
-    
+
     if (!query || !query.trim()) {
       fetchAllUsers();
       return;
@@ -98,7 +98,7 @@ const NewChatModal = ({ onClose }) => {
     console.log('📦 Payload JSON:', JSON.stringify(payload));
 
     setCreating(true);
-    
+
     try {
       console.log('📤 Sending request to create conversation...');
       const response = await conversationAPI.create(payload);
@@ -108,7 +108,7 @@ const NewChatModal = ({ onClose }) => {
 
       await fetchConversations();
       setSelectedConversation(response.data);
-      
+
       toast.success(`Chat started with ${selectedUser.name}`);
       onClose();
     } catch (error) {
@@ -122,12 +122,12 @@ const NewChatModal = ({ onClose }) => {
       console.error('Error response headers:', error.response?.headers);
       console.error('Error message:', error.message);
       console.error('========================================');
-      
-      const errorMessage = error.response?.data?.msg || 
-                          error.response?.data?.message || 
-                          error.response?.data?.error ||
-                          'Failed to create chat. Please try again.';
-      
+
+      const errorMessage = error.response?.data?.msg ||
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        'Failed to create chat. Please try again.';
+
       toast.error(errorMessage);
     } finally {
       setCreating(false);
@@ -177,16 +177,15 @@ const NewChatModal = ({ onClose }) => {
               <div
                 key={selectedUser._id}
                 onClick={() => !creating && handleCreateChat(selectedUser)}
-                className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
-                  creating 
-                    ? 'opacity-50 cursor-not-allowed' 
+                className={`flex items-center gap-3 p-3 rounded-lg transition-all ${creating
+                    ? 'opacity-50 cursor-not-allowed'
                     : 'hover:bg-gray-100 cursor-pointer hover:shadow-sm'
-                }`}
+                  }`}
               >
-                <Avatar 
-                  src={selectedUser.avatarUrl} 
-                  name={selectedUser.name} 
-                  size="md" 
+                <Avatar
+                  src={selectedUser.avatarUrl}
+                  name={selectedUser.name}
+                  size="md"
                 />
                 <div className="flex-1 min-w-0">
                   <h4 className="font-medium text-gray-800 truncate">
@@ -194,9 +193,6 @@ const NewChatModal = ({ onClose }) => {
                   </h4>
                   <p className="text-sm text-gray-600 truncate">
                     {selectedUser.email}
-                  </p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    ID: {selectedUser._id}
                   </p>
                 </div>
                 {creating && <Loader size="sm" />}

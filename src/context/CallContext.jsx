@@ -21,7 +21,7 @@ export const CallProvider = ({ children }) => {
     console.log('🔍 Socket available:', !!socket);
     console.log('🔍 Socket connected:', socket?.connected);
     console.log('🔍 Socket ID:', socket?.id);
-    
+
     // Expose socket globally for testing
     if (socket && typeof window !== 'undefined') {
       window.testCallSocket = (recipientUserId) => {
@@ -33,23 +33,24 @@ export const CallProvider = ({ children }) => {
   }, [socket]);
 
   // Initiate call
-  const initiateCall = async (recipientId, callType, conversationId) => {
+  const initiateCall = async (recipientId, callType, conversationId, recipientName, recipientAvatar) => {
     try {
       console.log('📞 ========================================');
       console.log('📞 INITIATING CALL');
       console.log('📞 Recipient ID:', recipientId);
+      console.log('📞 Recipient Name:', recipientName);
       console.log('📞 Call Type:', callType);
       console.log('📞 Conversation ID:', conversationId);
       console.log('📞 Socket Connected:', socket?.connected);
       console.log('📞 Socket ID:', socket?.id);
       console.log('📞 ========================================');
-      
+
       const isVideo = callType === 'video';
       console.log('🎥 Requesting media:', isVideo ? 'video + audio' : 'audio only');
-      
+
       const stream = await webrtcService.getLocalStream(isVideo);
       console.log('✅ Got local stream:', stream.getTracks().map(t => `${t.kind}: ${t.label}`));
-      
+
       setLocalStream(stream);
 
       await webrtcService.initializePeerConnection();
@@ -62,7 +63,14 @@ export const CallProvider = ({ children }) => {
         conversationId,
       });
 
-      const callData = { recipientId, callType, conversationId, status: 'ringing' };
+      const callData = {
+        recipientId,
+        recipientName,
+        recipientAvatar,
+        callType,
+        conversationId,
+        status: 'ringing'
+      };
       setActiveCall(callData);
       setCallStatus('ringing');
 
@@ -94,13 +102,13 @@ export const CallProvider = ({ children }) => {
 
     try {
       console.log('✅ Accepting call:', incomingCall);
-      
+
       const isVideo = incomingCall.callType === 'video';
       console.log('🎥 Requesting media for accept:', isVideo ? 'video + audio' : 'audio only');
-      
+
       const stream = await webrtcService.getLocalStream(isVideo);
       console.log('✅ Got local stream for accept:', stream.getTracks().map(t => `${t.kind}: ${t.label}`));
-      
+
       setLocalStream(stream);
 
       await webrtcService.initializePeerConnection();
@@ -115,7 +123,7 @@ export const CallProvider = ({ children }) => {
       });
       setCallStatus('accepted');
       setIncomingCall(null);
-      
+
       console.log('✅ Call accepted successfully');
     } catch (error) {
       console.error('❌ Failed to accept call:', error);
@@ -141,7 +149,7 @@ export const CallProvider = ({ children }) => {
   // End call
   const endCall = useCallback((reason = 'completed') => {
     console.log('🔴 Ending call with reason:', reason);
-    
+
     if (!activeCall) {
       console.log('⚠️ No active call to end');
       return;
@@ -158,7 +166,7 @@ export const CallProvider = ({ children }) => {
 
     console.log('📊 Call stats:', { duration, callId: activeCall.callId, conversationId: activeCall.conversationId });
 
-    socket?.emit('call:end', { 
+    socket?.emit('call:end', {
       recipientId: activeCall.recipientId || activeCall.callerId
     });
 
@@ -177,7 +185,7 @@ export const CallProvider = ({ children }) => {
     setActiveCall(null);
     setCallStatus(null);
     setCallStartTime(null);
-    
+
     console.log('✅ Call ended successfully');
   }, [activeCall, callTimeout, callStartTime, socket]);
 
@@ -234,15 +242,23 @@ export const CallProvider = ({ children }) => {
       setActiveCall(prev => prev ? { ...prev, callId } : prev);
     });
 
-    socket.on('call:accepted', async () => {
+    socket.on('call:accepted', async ({ recipientName, recipientAvatar }) => {
       console.log('✅ Call accepted by recipient');
-      
+      console.log('✅ Recipient info:', { recipientName, recipientAvatar });
+
+      // Update activeCall with recipient info
+      setActiveCall(prev => ({
+        ...prev,
+        recipientName,
+        recipientAvatar
+      }));
+
       // Clear timeout when call is accepted
       if (callTimeout) {
         clearTimeout(callTimeout);
         setCallTimeout(null);
       }
-      
+
       console.log('🔄 Creating WebRTC offer...');
       const offer = await webrtcService.createOffer();
       console.log('📤 Sending WebRTC offer');
