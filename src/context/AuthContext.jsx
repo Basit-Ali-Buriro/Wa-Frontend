@@ -31,39 +31,43 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     console.log('🔍 Checking authentication status...');
-    console.log('Cookies:', document.cookie);
 
-    const hasToken = document.cookie.includes('token=');
-    console.log('Has token cookie:', hasToken);
-
-    if (!hasToken) {
-      console.log('❌ No token cookie found - User NOT authenticated');
-      setIsAuthenticated(false);
-      setUser(null);
-      setLoading(false);
-      return;
+    // Check localStorage for quick restore (prevents flash of login page)
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        console.log('📦 Restoring user from localStorage:', parsedUser.name);
+        setUser(parsedUser);
+        setIsAuthenticated(true);
+      } catch (e) {
+        console.log('⚠️ Invalid stored user data');
+        localStorage.removeItem('user');
+      }
     }
 
     try {
-      console.log('✅ Token cookie exists - Fetching user data...');
+      // Always call API to verify auth - cookies are HttpOnly so we can't check them in JS
+      console.log('🔐 Verifying auth with server...');
       const response = await authAPI.getMe();
 
       if (response.data && response.data.user) {
-        console.log('✅ User data fetched successfully:', response.data.user);
+        console.log('✅ User authenticated:', response.data.user);
         setUser(response.data.user);
         setIsAuthenticated(true);
+        // Store in localStorage for quick restore on refresh
+        localStorage.setItem('user', JSON.stringify(response.data.user));
       } else {
         console.log('❌ No user data in response');
         setIsAuthenticated(false);
         setUser(null);
+        localStorage.removeItem('user');
       }
     } catch (error) {
-      console.error('❌ Failed to fetch user data:', error);
+      console.error('❌ Auth check failed:', error);
       setIsAuthenticated(false);
       setUser(null);
-
-      // Clear invalid cookie
-      document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      localStorage.removeItem('user');
     } finally {
       setLoading(false);
     }
@@ -80,6 +84,8 @@ export const AuthProvider = ({ children }) => {
 
       setUser(response.data.user);
       setIsAuthenticated(true);
+      // Store in localStorage for quick restore on refresh
+      localStorage.setItem('user', JSON.stringify(response.data.user));
       toast.success('Registration successful!');
       return { success: true };
     } catch (error) {
@@ -103,10 +109,10 @@ export const AuthProvider = ({ children }) => {
 
       setUser(response.data.user);
       setIsAuthenticated(true);
+      // Store in localStorage for quick restore on refresh
+      localStorage.setItem('user', JSON.stringify(response.data.user));
 
       console.log('✅ isAuthenticated set to TRUE');
-      console.log('✅ This should trigger ChatContext to fetch conversations');
-
       toast.success('Login successful!');
       return { success: true };
     } catch (error) {
@@ -122,11 +128,13 @@ export const AuthProvider = ({ children }) => {
       await authAPI.logout();
       setUser(null);
       setIsAuthenticated(false);
+      localStorage.removeItem('user');
       toast.success('Logged out successfully');
     } catch (error) {
       console.error('Logout error:', error);
       setUser(null);
       setIsAuthenticated(false);
+      localStorage.removeItem('user');
     }
   };
 

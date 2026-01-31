@@ -198,7 +198,7 @@ const MessageInput = ({ replyingTo, onCancelReply, editingMessage, onCancelEdit 
         <button
           type="button"
           onClick={() => setShowSuggestions(!showSuggestions)}
-          className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition-colors hidden sm:block"
+          className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition-colors"
           title="Smart Suggestions"
         >
           <Sparkles size={20} className="sm:w-6 sm:h-6 text-purple-600" />

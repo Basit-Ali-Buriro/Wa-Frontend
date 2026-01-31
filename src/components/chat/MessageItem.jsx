@@ -105,6 +105,35 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
     setShowActions(!showActions);
   };
 
+  // Long press (hold) for mobile
+  const longPressTimeout = useRef(null);
+
+  const handleTouchStart = () => {
+    longPressTimeout.current = setTimeout(() => {
+      console.log('📱 Long press detected:', message._id);
+      setShowActions(true);
+      // Vibrate on supported devices for feedback
+      if (navigator.vibrate) {
+        navigator.vibrate(50);
+      }
+    }, 500); // 500ms hold
+  };
+
+  const handleTouchEnd = () => {
+    if (longPressTimeout.current) {
+      clearTimeout(longPressTimeout.current);
+      longPressTimeout.current = null;
+    }
+  };
+
+  const handleTouchMove = () => {
+    // Cancel long press if user moves finger (scrolling)
+    if (longPressTimeout.current) {
+      clearTimeout(longPressTimeout.current);
+      longPressTimeout.current = null;
+    }
+  };
+
   const handleCopyText = () => {
     if (message.text) {
       navigator.clipboard.writeText(message.text);
@@ -128,12 +157,12 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
         />
       )}
 
-      <div className={`max-w-md flex flex-col ${isSender ? 'items-end' : 'items-start'}`}>
+      <div className={`max-w-[75vw] sm:max-w-md flex flex-col ${isSender ? 'items-end' : 'items-start'}`}>
         {/* Reply preview */}
         {message.replyTo && (
           <div className={`${isSender ? 'bg-blue-100' : 'bg-gray-100'
             } border-l-4 border-blue-500 px-3 py-2 mb-1 rounded text-sm max-w-xs`}>
-            <p className="text-xs text-gray-600 font-medium">
+            <p className="text-xs text-gray-600 font-medium truncate max-w-[200px]">
               {message.replyTo.sender?.name || 'Unknown'}
             </p>
             <p className="text-gray-700 truncate">
@@ -151,18 +180,21 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
         )}
 
         <div className="relative">
-          {/* Message bubble - DOUBLE CLICK HERE */}
+          {/* Message bubble - Double-click or long press for actions */}
           <div
             onDoubleClick={handleDoubleClick}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            onTouchMove={handleTouchMove}
             className={`px-4 py-2 rounded-lg shadow-md cursor-pointer select-none transition-all ${isSender
               ? 'bg-blue-500 text-white hover:bg-blue-600'
               : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
               } ${showActions ? 'ring-2 ring-blue-400' : ''}`}
-            title="Double-click for actions"
+            title="Hold or double-click for actions"
           >
             {/* Sender name in groups */}
             {!isSender && (
-              <p className="text-xs font-semibold mb-1 text-blue-600">
+              <p className="text-xs font-semibold mb-1 text-blue-600 truncate max-w-[200px]">
                 {message.sender.name}
               </p>
             )}
@@ -231,7 +263,7 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
 
             {/* Text */}
             {message.text && (
-              <p className="break-words whitespace-pre-wrap">{message.text}</p>
+              <p className="break-words whitespace-pre-wrap text-sm sm:text-base">{message.text}</p>
             )}
 
             {/* Edited indicator */}
@@ -258,8 +290,8 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
 
           {/* ✅ ACTION BUTTONS - Show on double-click */}
           {showActions && (
-            <div className={`absolute ${isSender ? 'sm:left-0 sm:-translate-x-full sm:-ml-2 left-0 -top-12' : 'sm:right-0 sm:translate-x-full sm:mr-2 right-0 -top-12'
-              } sm:top-0 flex sm:flex-col flex-row items-center gap-1 animate-fadeIn z-10`}>
+            <div className={`absolute ${isSender ? 'sm:left-0 sm:-translate-x-full sm:-ml-2 right-full -mr-1' : 'sm:right-0 sm:translate-x-full sm:mr-2 left-full ml-1'}
+              top-0 flex sm:flex-col flex-col items-center gap-1 animate-fadeIn z-20`}>
 
               {/* Reply button */}
               <button
@@ -387,8 +419,8 @@ const MessageItem = ({ message, onReply, onEdit, onDelete, onForward, onReact })
                 {/* Reaction picker popup */}
                 {showReactionPicker && (
                   <div
-                    className={`absolute ${isSender ? 'right-0' : 'left-0'
-                      } bottom-full mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-2 flex gap-1 animate-slideDown z-50`}
+                    className={`absolute ${isSender ? 'right-full mr-2' : 'left-full ml-2'
+                      } top-0 bg-white rounded-lg shadow-xl border border-gray-200 p-2 flex flex-wrap gap-1 animate-slideDown z-50 w-max max-w-[180px]`}
                   >
                     {reactions.map((emoji) => (
                       <button

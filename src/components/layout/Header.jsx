@@ -117,7 +117,7 @@ const Header = () => {
         </button>
 
         <div
-          className="flex items-center gap-3 cursor-pointer hover:bg-gray-200 p-2 rounded-lg transition-colors flex-1 min-w-0"
+          className="flex items-center gap-2 sm:gap-3 cursor-pointer hover:bg-gray-200 p-2 rounded-lg transition-colors flex-1 min-w-0 overflow-hidden max-w-[calc(100%-120px)] sm:max-w-none"
           onClick={() => {
             if (selectedConversation.isGroup) {
               setShowGroupSettings(true);
@@ -133,12 +133,13 @@ const Header = () => {
             name={getConversationName()}
             online={isOnline()}
             size="md"
+            className="shrink-0"
           />
-          <div className="min-w-0 flex-1">
-            <h3 className="font-semibold text-gray-800 truncate">
+          <div className="min-w-0 flex-1 overflow-hidden max-w-[150px] sm:max-w-[250px] md:max-w-none">
+            <h3 className="font-semibold text-gray-800 truncate text-sm sm:text-base block">
               {getConversationName()}
             </h3>
-            <p className="text-xs text-gray-500 truncate">{getParticipantCount()}</p>
+            <p className="text-xs text-gray-500 truncate block">{getParticipantCount()}</p>
           </div>
         </div>
 

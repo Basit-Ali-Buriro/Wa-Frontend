@@ -136,6 +136,10 @@ export const ChatProvider = ({ children }) => {
       if (socket?.connected) {
         socket.emit('join-conversation', selectedConversation._id);
         console.log('🚪 Joined conversation room:', selectedConversation._id);
+
+        // Mark messages as seen when opening conversation
+        socket.emit('mark-messages-seen', { conversationId: selectedConversation._id });
+        console.log('👁️ Marking messages as seen in:', selectedConversation._id);
       }
     }
 
@@ -191,14 +195,32 @@ export const ChatProvider = ({ children }) => {
       }
     };
 
+    const handleMessagesSeen = ({ conversationId, seenBy, messageIds }) => {
+      console.log('👁️ Messages seen event:', { conversationId, seenBy, messageCount: messageIds?.length });
+
+      if (selectedConversation?._id === conversationId) {
+        setMessages(prev => prev.map(msg => {
+          if (messageIds?.includes(msg._id) && !msg.seenBy?.includes(seenBy)) {
+            return {
+              ...msg,
+              seenBy: [...(msg.seenBy || []), seenBy]
+            };
+          }
+          return msg;
+        }));
+      }
+    };
+
     socket.on('new-message', handleNewMessage);
     socket.on('user-typing', handleUserTyping);
     socket.on('user-stopped-typing', handleUserStoppedTyping);
+    socket.on('messages-seen', handleMessagesSeen);
 
     return () => {
       socket.off('new-message', handleNewMessage);
       socket.off('user-typing', handleUserTyping);
       socket.off('user-stopped-typing', handleUserStoppedTyping);
+      socket.off('messages-seen', handleMessagesSeen);
     };
   }, [socket, selectedConversation, user]);
 

@@ -110,7 +110,7 @@ const VideoCallInterface = () => {
                 <div className="w-32 h-32 bg-white bg-opacity-20 rounded-full mx-auto mb-4 flex items-center justify-center text-4xl backdrop-blur-sm">
                   {activeCall.recipientName?.[0] || activeCall.callerName?.[0] || '?'}
                 </div>
-                <p className="text-2xl font-semibold mb-2">
+                <p className="text-xl sm:text-2xl font-semibold mb-2 truncate max-w-[80vw] px-4">
                   {activeCall.recipientName || activeCall.callerName || 'Unknown'}
                 </p>
                 <p className="text-blue-200 text-lg">{callStatus}...</p>
@@ -123,7 +123,7 @@ const VideoCallInterface = () => {
               <div className="w-32 h-32 bg-gray-700 rounded-full mx-auto mb-4 flex items-center justify-center text-4xl">
                 {activeCall.recipientName?.[0] || activeCall.callerName?.[0] || '?'}
               </div>
-              <p className="text-xl">{activeCall.recipientName || activeCall.callerName || 'Unknown'}</p>
+              <p className="text-lg sm:text-xl truncate max-w-[80vw] px-4">{activeCall.recipientName || activeCall.callerName || 'Unknown'}</p>
               <p className="text-gray-400 mt-2">{callStatus}...</p>
 
               {/* Cancel button during ringing (for caller) */}
@@ -170,32 +170,32 @@ const VideoCallInterface = () => {
         )}
 
         {/* Controls */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-4">
+        <div className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 flex gap-2 sm:gap-4">
           <button
             onClick={toggleMute}
-            className={`p-4 rounded-full transition-colors ${isMuted ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
+            className={`p-3 sm:p-4 rounded-full transition-colors ${isMuted ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
               } text-white`}
           >
-            {isMuted ? <MicOff size={24} /> : <Mic size={24} />}
+            {isMuted ? <MicOff size={20} className="sm:w-6 sm:h-6" /> : <Mic size={20} className="sm:w-6 sm:h-6" />}
           </button>
 
           {activeCall.callType === 'video' && (
             <>
               <button
                 onClick={toggleVideo}
-                className={`p-4 rounded-full transition-colors ${isVideoOff ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
+                className={`p-3 sm:p-4 rounded-full transition-colors ${isVideoOff ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
                   } text-white`}
               >
-                {isVideoOff ? <VideoOff size={24} /> : <Video size={24} />}
+                {isVideoOff ? <VideoOff size={20} className="sm:w-6 sm:h-6" /> : <Video size={20} className="sm:w-6 sm:h-6" />}
               </button>
 
               {!isVideoOff && (
                 <button
                   onClick={switchCamera}
-                  className="p-4 rounded-full transition-colors bg-gray-700 hover:bg-gray-600 text-white"
+                  className="p-3 sm:p-4 rounded-full transition-colors bg-gray-700 hover:bg-gray-600 text-white"
                   title="Switch camera"
                 >
-                  <SwitchCamera size={24} />
+                  <SwitchCamera size={20} className="sm:w-6 sm:h-6" />
                 </button>
               )}
             </>
@@ -203,9 +203,9 @@ const VideoCallInterface = () => {
 
           <button
             onClick={endCall}
-            className="p-4 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors"
+            className="p-3 sm:p-4 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors"
           >
-            <Phone size={24} className="transform rotate-135" />
+            <Phone size={20} className="sm:w-6 sm:h-6 transform rotate-135" />
           </button>
         </div>
       </div>

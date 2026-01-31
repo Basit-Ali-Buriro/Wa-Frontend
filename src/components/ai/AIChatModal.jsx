@@ -37,7 +37,7 @@ const AIChatModal = ({ isOpen, onClose }) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="AI Assistant" size="lg">
-      <div className="flex flex-col h-96">
+      <div className="flex flex-col h-[60vh] sm:h-96">
         {/* Messages */}
         <div className="flex-1 overflow-y-auto mb-4 space-y-3">
           {messages.map((msg, index) => (
